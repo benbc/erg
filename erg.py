@@ -22,7 +22,8 @@ def run(omega):
     print(f"wage rate: {omega}")
 
     profit_eq = Eq(p, (1 + rho) * (A * p + omega * l))
-    # Kurz and Salvadori have this form instead (eq 4.6a). Which is right?
+    # Kurz and Salvadori have this form instead (eq 4.6a). Which is right? Replicating Hahnel's profits requires
+    # my version.
     # profit_eq = Eq(p, (1 + rho) * A * p + omega * l)
     p1_val, rho_val = only(_solve(profit_eq, p1, rho))
     p = p.subs(p1, p1_val)
@@ -45,6 +46,8 @@ def run(omega):
 
 
 if __name__ == "__main__":
+    # These are almost Hahnel's examples. He's rounding his numbers, though, and his 0.691 actually gives a tiny
+    # negative number which our model rejects.
     for o in [0.6909, 0.5, 0.4]:
         run(o)
         print()
