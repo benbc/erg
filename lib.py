@@ -49,7 +49,7 @@ def hadamard_inv(m):
     return Matrix(rows)
 
 
-def _solve(equation, *variables):
+def solve_(equation, *variables):
     def convert_dict(sol):
         return tuple(sol[var] for var in variables)
 
