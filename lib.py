@@ -1,8 +1,8 @@
-from sympy import Matrix, shape, solve
+from sympy import Matrix, shape, solve, Float
 
 
-def vector(x1, x2):
-    return Matrix([x1, x2])
+def vector(*xs):
+    return Matrix(xs)
 
 
 def print_vector(prefix, v):
@@ -24,6 +24,11 @@ def dot(v1, v2):
 def sum_vector(v):
     assert shape(v)[1] == 1
     return sum(v.col(0))
+
+
+def vector_to_tuple(v):
+    assert shape(v)[1] == 1
+    return tuple(v.col(0))
 
 
 def hadamard(m1, m2):
@@ -76,3 +81,21 @@ def solve_(equation, *variables):
 def only(xs):
     assert len(xs) == 1, f"Not exactly one solution: {xs}"
     return xs[0]
+
+
+def round_one(x):
+    if isinstance(x, Float):
+        # Ugh -- tabulate will call float() on these, which is broken. So we convert to a string here.
+        # e.g. float(Float(0.0535068155343779).round(3)) => 0.05401611328125
+        return str(x.round(3))
+    if isinstance(x, float):
+        return round(x, 3)
+    return x
+
+
+def round_all(xs):
+    for x in xs:
+        if isinstance(x, tuple):
+            yield tuple(round_one(y) for y in x)
+        else:
+            yield round_one(x)
