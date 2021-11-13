@@ -6,6 +6,16 @@ def same_shape(m1, m2):
     return shape(m1) == shape(m2)
 
 
+def is_square(m):
+    h, w = shape(m)
+    return h == w
+
+
+def square_size(m):
+    assert is_square(m)
+    return shape(m)[0]
+
+
 def hadamard(m1, m2):
     assert same_shape(m1, m2)
     num_rows, num_columns = shape(m1)
@@ -35,6 +45,11 @@ def vector(*xs):
 
 def is_vector(v):
     return shape(v)[1] == 1
+
+
+def vector_len(v):
+    assert is_vector(v)
+    return shape(v)[0]
 
 
 def print_vector(prefix, v):

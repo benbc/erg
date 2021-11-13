@@ -1,13 +1,23 @@
 from sympy import Matrix, symbols, Eq, Integer, eye
 from tabulate import tabulate
 
-from lib import vector, dot, sum_vector, hadamard, hadamard_inv, solve, only, vector_to_tuple, round_all
+from lib import vector, dot, sum_vector, hadamard, hadamard_inv, solve, only, vector_to_tuple, round_all, vector_len, \
+    is_square, square_size
 
 
 def run(technique, omega):
     """
     Solve the model for a given wage rate (omega) and technique.
     """
+
+    # Production matrix and labour vector
+    A, l = technique
+    num_sectors = vector_len(l)
+    assert is_square(A)
+    assert square_size(A) == num_sectors
+
+    assert (eye(num_sectors) - A).det() >= 0, "Production matrix is not productive"  # Kurz and Salvadori eq 4.4
+
     # Free variables
     #
     # Naming conventions:
@@ -15,10 +25,6 @@ def run(technique, omega):
     #   - vectors are lowercase
     #   - scalars are greek lowercase or indexed roman lowercase where they appear as vector components
     p1, p3, rho, w1, w2, k0, k1, k2, k3, kappa = symbols('p1 p3 rho w1 w2 k0 k1 k2 k3 kappa', negative=False, real=True)
-
-    # Production matrix and labour vector
-    A, l = technique
-    assert (eye(3) - A).det() >= 0, "Production matrix is not productive"  # Kurz and Salvadori eq 4.4
 
     p = vector(p1, 1, p3)  # Prices.
     w = vector(w1, w1, 0)  # Wage basket. Composition isn't fully determined: pick one where the amounts are equal.
