@@ -1,38 +1,12 @@
 from sympy import Matrix, shape, solve, Float
 
 
-def vector(*xs):
-    return Matrix(xs)
-
-
-def print_vector(prefix, v):
-    assert shape(v)[1] == 1
-    print(f"{prefix}: ({', '.join(str(x) for x in v.col(0))})")
-
-
-def dot(v1, v2):
-    hv1, wv1 = shape(v1)
-    hv2, wv2 = shape(v2)
-    assert wv1 == 1
-    assert wv2 == 1
-    assert hv1 == hv2
-    mul = v1.T * v2
-    assert shape(mul) == (1, 1)
-    return mul.row(0)[0]
-
-
-def sum_vector(v):
-    assert shape(v)[1] == 1
-    return sum(v.col(0))
-
-
-def vector_to_tuple(v):
-    assert shape(v)[1] == 1
-    return tuple(v.col(0))
+def same_shape(m1, m2):
+    return shape(m1) == shape(m2)
 
 
 def hadamard(m1, m2):
-    assert shape(m1) == shape(m2)
+    assert same_shape(m1, m2)
     num_rows, num_columns = shape(m1)
     rows = []
     for i in range(num_rows):
@@ -52,6 +26,45 @@ def hadamard_inv(m):
             row.append(1 / m.row(i)[j])
         rows.append(row)
     return Matrix(rows)
+
+
+def vector(*xs):
+    return Matrix(xs)
+
+
+def is_vector(v):
+    return shape(v)[1] == 1
+
+
+def print_vector(prefix, v):
+    assert is_vector(v)
+    print(f"{prefix}: ({', '.join(str(x) for x in v.col(0))})")
+
+
+def sum_vector(v):
+    assert is_vector(v)
+    return sum(v.col(0))
+
+
+def vector_to_tuple(v):
+    assert is_vector(v)
+    return tuple(v.col(0))
+
+
+def dot(v1, v2):
+    assert is_vector(v1)
+    assert is_vector(v2)
+    assert same_shape(v1, v2)
+    return matrix_to_scalar(v1.T * v2)
+
+
+def matrix_to_scalar(mul):
+    assert is_scalar(mul)
+    return mul.row(0)[0]
+
+
+def is_scalar(mul):
+    return shape(mul) == (1, 1)
 
 
 def solve_(equation, *variables):
