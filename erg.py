@@ -1,7 +1,7 @@
 from sympy import Matrix, symbols, Eq, Integer, eye
 from tabulate import tabulate
 
-from lib import vector, dot, sum_vector, hadamard, hadamard_inv, solve_, only, vector_to_tuple, round_all
+from lib import vector, dot, sum_vector, hadamard, hadamard_inv, solve, only, vector_to_tuple, round_all
 
 
 def run(omega):
@@ -36,18 +36,18 @@ def run(omega):
     # Kurz and Salvadori have this form instead (eq 4.6a). Which is right? Replicating Hahnel's profits requires
     # my version.
     # profit_eq = Eq(p, (1 + rho) * A * p + omega * l)
-    rho_val, p1_val, p3_val = only(solve_(profit_eq, rho, p1, p3))
+    rho_val, p1_val, p3_val = only(solve(profit_eq, rho, p1, p3))
     rho = rho.subs(rho, rho_val)
     p = p.subs(p1, p1_val).subs(p3, p3_val)
 
     # Solve the wage equation to determine the wage basket composition.
     wage_eq = Eq(dot(w, p), omega)
-    w1_val = only(solve_(wage_eq, w1))
+    w1_val = only(solve(wage_eq, w1))
     w = w.subs(w1, w1_val)
 
     # Solve the production equation to determine the labour assignments.
     production_eq = Eq(u, A.T * u + kappa * w)
-    k1_val, k2_val, k3_val = only(solve_(production_eq, k1, k2, k3))
+    k1_val, k2_val, k3_val = only(solve(production_eq, k1, k2, k3))
     k = k.subs(k1, k1_val).subs(k2, k2_val).subs(k3, k3_val)
     k0 = k0.subs(k1, k1_val).subs(k2, k2_val).subs(k3, k3_val)
 

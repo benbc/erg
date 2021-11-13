@@ -1,4 +1,5 @@
-from sympy import Matrix, shape, solve, Float
+from sympy import shape, Matrix, Float
+import sympy
 
 
 def same_shape(m1, m2):
@@ -67,28 +68,29 @@ def is_scalar(mul):
     return shape(mul) == (1, 1)
 
 
-def solve_(equation, *variables):
-    def convert_dict(sol):
-        return tuple(sol[var] for var in variables)
-
-    solutions = solve(equation, *variables)
-
-    if isinstance(solutions, tuple):
-        return [solutions]
-    if isinstance(solutions, dict):
-        return [convert_dict(solutions)]
-
-    assert isinstance(solutions, list)
-    converted = []
-    for solution in solutions:
-        if isinstance(solution, tuple):
-            converted.append(solution)
-            continue
+def solve(equation, *variables):
+    def convert(solution):
+        if len(variables) == 1:
+            # If there is only one variable then sympy returns it nude
+            assert not (isinstance(solution, dict) or isinstance(solution, tuple)), f"unexpected type {solution}"
+            return solution
+        # When there are multiple variables, sympy sometimes returns dicts and sometimes tuples, depending on which
+        # code paths it ends up taking. We always want a tuple, so that the result can be unpacked into solution
+        # variables.
         if isinstance(solution, dict):
-            converted.append(convert_dict(solution))
-            continue
-        converted.append(solution)
-    return converted
+            # We need to respect the order in which the variables were passed
+            return tuple(solution[var] for var in variables)
+        if isinstance(solution, tuple):
+            return solution
+        assert False, f"unexpected type {solution}"
+
+    def ensure_list(solutions):
+        if not isinstance(solutions, list):
+            # If there is only one solution then sympy returns the bare solution rather than a list
+            solutions = [solutions]
+        return solutions
+
+    return list(map(convert, ensure_list(sympy.solve(equation, *variables))))
 
 
 def only(xs):
